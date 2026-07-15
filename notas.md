@@ -14,3 +14,29 @@
   cambió toda la personalidad sin tocar la pregunta.
 - Idea para el proyecto de agosto: el system prompt será donde le diga al
   asistente docente que actúa como profesor de secundaria en España (LOMLOE).
+
+## Martes 14 · El bucle Pensar → Actuar → Observar
+
+Objetivo del agente: preparar un examen de recuperación de Programación
+para 4º de ESO sobre bucles y condicionales.
+
+### Vuelta 1
+- PENSAR: "Necesito saber qué contenidos entran. Debo consultar la
+  programación didáctica antes de redactar nada."
+- ACTUAR: usa la herramienta leer_documento("programacion_4ESO.pdf")
+- OBSERVAR: "El documento dice: bucles for/while, condicionales, listas.
+  Ya sé qué debe cubrir el examen."
+
+### Vuelta 2
+- PENSAR: "Con los contenidos claros, redacto 5 preguntas de dificultad
+  creciente y una rúbrica."
+- ACTUAR: usa la herramienta generar_texto(instrucciones)
+- OBSERVAR: "Tengo el borrador. ¿Cumple todo? Falta la rúbrica → otra vuelta."
+
+### Vuelta 3
+- PENSAR: "Falta la rúbrica. La genero y ya puedo terminar."
+- ACTUAR: genera la rúbrica → respuesta final al usuario.
+
+Clave: el agente NO lo hace todo de golpe. Da vueltas al bucle y en cada
+una decide el siguiente paso según lo que OBSERVÓ en la anterior.
+Es exactamente lo que haré en agosto con mi asistente docente.
