@@ -1,0 +1,9 @@
+Nota de prueba para el agente lector.
+
+La modelización de la gripe mediante ecuaciones en derivadas parciales
+permite estudiar cómo se propaga la epidemia en el espacio, no solo en el
+tiempo. En el corredor entre Corea del Sur y Valencia, el reto principal
+no es la matemática, sino conseguir datos de incidencia comparables entre
+países (tasas por población, no recuentos crudos).
+
+Si el agente lee esto, sabrá de qué trata sin que se lo hayamos contado.
