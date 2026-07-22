@@ -13,7 +13,9 @@ Requisitos:  uv add pypdf smolagents litellm  (ya instalados en sesiones previas
 """
 
 import os
+import re
 from pypdf import PdfReader
+from docx import Document
 from smolagents import tool, ToolCallingAgent, LiteLLMModel
 
 
@@ -42,19 +44,43 @@ def extraer_texto_pdf(ruta: str) -> str:
         return f"Error al leer el PDF: {e}"
 
 
-# --- HERRAMIENTA 2: guardar la ficha ---
+# --- HERRAMIENTA 2: guardar la ficha en Word (.docx) ---
+def _md_a_docx(md: str, destino: str):
+    """Convierte la ficha (en Markdown sencillo) a un documento Word.
+    - '# Título'  -> encabezado
+    - '- **Campo:** valor'  -> párrafo con el campo en negrita
+    """
+    doc = Document()
+    for linea in md.splitlines():
+        linea = linea.strip()
+        if not linea:
+            continue
+        if linea.startswith("# "):
+            doc.add_heading(linea[2:].strip(), level=1)
+            continue
+        # Quitamos el guion inicial de lista si lo hay.
+        if linea.startswith("- "):
+            linea = linea[2:].strip()
+        p = doc.add_paragraph()
+        # Partimos por los **...** para poner en negrita esos tramos.
+        for i, trozo in enumerate(re.split(r"\*\*(.+?)\*\*", linea)):
+            run = p.add_run(trozo)
+            if i % 2 == 1:      # los tramos impares venían entre ** **
+                run.bold = True
+    doc.save(destino)
+
+
 @tool
 def guardar_ficha(ruta_salida: str, contenido: str) -> str:
-    """Guarda el texto de la ficha en un archivo (lo crea o lo sobrescribe).
+    """Guarda la ficha como documento Word (.docx). Lo crea o lo sobrescribe.
 
     Args:
-        ruta_salida: Ruta del archivo a escribir, por ejemplo '~/.../Ficha.md'.
-        contenido: El texto completo de la ficha.
+        ruta_salida: Ruta del .docx a escribir, por ejemplo '~/.../Ficha.docx'.
+        contenido: El texto de la ficha en Markdown (con # y **negritas**).
     """
     try:
         destino = _ruta(ruta_salida)
-        with open(destino, "w", encoding="utf-8") as f:
-            f.write(contenido)
+        _md_a_docx(contenido, destino)
         return f"Ficha guardada en {destino}"
     except Exception as e:
         return f"Error al guardar: {e}"
@@ -81,7 +107,7 @@ PLANTILLA = """# Ficha: <título del artículo>
 
 if __name__ == "__main__":
     pdf = "~/TESIS doctoral MAS/Publicaciones LEER/0 GRIPE_FLORIN/0 Gripe_Florin.pdf"
-    salida = "~/TESIS doctoral MAS/Publicaciones LEER/0 GRIPE_FLORIN/Ficha - Gripe Florin.md"
+    salida = "~/TESIS doctoral MAS/Publicaciones LEER/0 GRIPE_FLORIN/Ficha - Gripe Florin.docx"
 
     tarea = (
         f"Lee el artículo científico en '{pdf}' usando extraer_texto_pdf. "
